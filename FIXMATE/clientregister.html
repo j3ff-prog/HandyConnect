@@ -29,12 +29,10 @@ document.getElementById('clientForm').addEventListener('submit', async function(
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)
     });
     const result = await res.json();
-     // ...existing code...
   if (res.ok) {
     document.getElementById('msg').textContent = 'Registered. Redirecting to dashboard...';
     setTimeout(()=> location.href='clientdashboard.html', 1000);
   } else document.getElementById('msg').textContent = result.error || 'Registration failed';
-  // ...existing code...
   } catch(e){ document.getElementById('msg').textContent='Network error'; console.error(e); }
 });
 </script>

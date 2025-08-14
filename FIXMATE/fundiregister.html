@@ -27,8 +27,13 @@
   </div>
 
 <script>
+// filepath: c:\Users\PC\Desktop\Project\handyconnect\FIXMATE\fundiregister.html
 document.getElementById('fundiForm').addEventListener('submit', async function(e) {
   e.preventDefault();
+  const msg = document.getElementById('msg');
+  msg.style.color = '#333';
+  msg.textContent = 'Registering...';
+
   const fullName = document.getElementById('fullName').value.trim();
   const email = document.getElementById('email').value.trim();
   const phone = document.getElementById('phone').value.trim();
@@ -55,13 +60,16 @@ document.getElementById('fundiForm').addEventListener('submit', async function(e
     });
     const result = await res.json();
     if (res.ok) {
-      document.getElementById('msg').textContent = 'Registered. Redirecting to dashboard...';
-      setTimeout(()=> location.href = 'fundidashboard.html', 1000);
+      msg.style.color = 'green';
+      msg.textContent = 'Registered! Redirecting to dashboard...';
+      setTimeout(()=> location.href = 'fundidashboard.html', 1200);
     } else {
-      document.getElementById('msg').textContent = result.error || 'Registration failed';
+      msg.style.color = 'red';
+      msg.textContent = result.error || 'Registration failed';
     }
   } catch (err) {
-    document.getElementById('msg').textContent = 'Network error';
+    msg.style.color = 'red';
+    msg.textContent = 'Network error. Is your backend running?';
     console.error(err);
   }
 });
