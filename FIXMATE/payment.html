@@ -1,65 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>NestFind Payment</title>
+  <meta charset="UTF-8" />
+  <title>Mpesa Payment</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(to right, #2bc1f3, #02a2d8);
+      min-height: 100vh;
+      margin: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      padding: 50px;
+      justify-content: center;
     }
     .container {
-      background: white;
-      padding: 20px;
+      background: #fff;
+      padding: 32px 28px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 300px;
+      box-shadow: 0 4px 16px rgba(44,193,243,0.10);
+      max-width: 350px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    h2 {
       text-align: center;
+      color: #009acd;
+      margin-bottom: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    input {
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #cce7f6;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input:focus {
+      border-color: #2bc1f3;
     }
     button {
-      background-color: #28a745;
-      color: white;
+      background: #2bc1f3;
+      color: #fff;
       border: none;
-      padding: 10px 20px;
-      margin-top: 15px;
-      border-radius: 5px;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s;
     }
     button:hover {
-      background-color: #218838;
+      background: #009acd;
+    }
+    #msg {
+      text-align: center;
+      margin-top: 10px;
+      color: #d32f2f;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-
-  <div class="container">
-    <h2>Pay with M-Pesa</h2>
-    <p>Amount: Ksh 1,000</p>
-    <input type="tel" id="phoneNumber" placeholder="Enter phone number" style="width:100%; padding:8px; margin-top:10px;">
-    <button id="payBtn">Pay Now</button>
-  </div>
-
+  <form class="container" id="mpesaForm">
+    <h2>Mpesa Payment</h2>
+    <input id="phone" type="tel" placeholder="Mpesa Phone Number" required />
+    <input id="amount" type="number" placeholder="Amount" required min="1" />
+    <button type="submit">Pay Now</button>
+    <p id="msg"></p>
+  </form>
   <script>
-    document.getElementById("payBtn").addEventListener("click", function () {
-      let phone = document.getElementById("phoneNumber").value.trim();
+    document.getElementById('mpesaForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const msg = document.getElementById('msg');
+      msg.textContent = 'Processing payment...';
 
-      if (phone === "") {
-        alert("Please enter your phone number.");
-        return;
+      const phone = document.getElementById('phone').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+
+      try {
+        const res = await fetch('http://localhost:3000/api/mpesa-pay', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ phone, amount })
+        });
+        const result = await res.json();
+        if (res.ok) {
+          msg.style.color = 'green';
+          msg.textContent = result.message || 'Payment initiated. Check your phone to complete!';
+        } else {
+          msg.style.color = 'red';
+          msg.textContent = result.error || 'Payment failed';
+        }
+      } catch (err) {
+        msg.style.color = 'red';
+        msg.textContent = 'Network error. Try again.';
+        console.error(err);
       }
-
-      if (!/^(\+?254|0)?[7]\d{8}$/.test(phone)) {
-        alert("Please enter a valid Kenyan phone number.");
-        return;
-      }
-
-      alert("Payment request sent to " + phone);
-      // Here is where you'd integrate with your backend M-Pesa API
     });
   </script>
-
 </body>
 </html>
