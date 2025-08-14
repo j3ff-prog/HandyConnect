@@ -141,7 +141,7 @@ app.post('/api/requests', (req, res) => {
   });
 });
 
-// Get all requests (joined with service info)
+// Get all requests (joined with service )
 app.get('/api/requests', (req, res) => {
   const sql = `
     SELECT requests.id, services.name AS fundi_name, services.service, requests.requester_name, requests.requester_phone, requests.status, requests.requested_at
