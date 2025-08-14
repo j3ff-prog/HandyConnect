@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Post Fundi Service</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+  input, textarea, button { width: 100%; margin: 8px 0; padding: 10px; }
+  button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+  button:hover { background-color: #0056b3; }
+</style>
+</head>
+<body>
+  <h1>Post Your Service</h1>
+  <form id="fundiForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="text" id="service" placeholder="Service Title" required />
+    <textarea id="description" placeholder="Describe your service" rows="4" required></textarea>
+    <input type="text" id="phone" placeholder="Phone Number" required />
+    <button type="submit">Post Service</button>
+  </form>
+
+  <script>
+document.getElementById('serviceForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const formData = {
+        name: document.getElementById('name').value,
+        service: document.getElementById('service').value,
+        description: document.getElementById('description').value,
+        price: document.getElementById('price').value
+    };
+
+    try {
+        const res = await fetch('http://localhost:3000/api/services', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (res.ok) {
+            alert('Service posted successfully!');
+            document.getElementById('serviceForm').reset();
+        } else {
+            alert('Error posting service.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Could not connect to server.');
+    }
+});
+</script>
+</body>
+</html>

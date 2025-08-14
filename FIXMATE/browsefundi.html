@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Browse Fundis</title>
+<style>
+  body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f4f7f8;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+#fundisList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fundi-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+}
+
+.fundi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.fundi-card h3 {
+  margin: 0 0 8px 0;
+  color: #2980b9;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.fundi-card p {
+  margin: 5px 0;
+  line-height: 1.5;
+  font-size: 1rem;
+  color: #555;
+}
+
+.fundi-card p strong {
+  color: #34495e;
+}
+
+button.request-btn {
+  margin-top: 12px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.request-btn:hover {
+  background-color: #1e8449;
+}
+</style>
+</head>
+<body>
+  <h1>Available Fundi Services</h1>
+  <div id="servicesContainer">Loading fundis...</div>
+
+<script>
+async function loadServices(){
+  try {
+    const res = await fetch('http://localhost:3000/api/services');
+    const services = await res.json();
+    const container = document.getElementById('servicesContainer');
+    container.innerHTML = '';
+   // ...existing code...
+services.forEach(s => {
+  const card = document.createElement('div');
+  card.className = 'fundi-card';
+  card.innerHTML = `
+    <h3>${s.name}</h3>
+    <p><strong>${s.service}</strong></p>
+    <p>${s.description || ''}</p>
+    <p>Price: ${s.price || 'N/A'}</p>
+  `;
+  const btn = document.createElement('button');
+  btn.className = 'request-btn';
+  btn.textContent = 'Request Service';
+  btn.addEventListener('click', () => requestService(s.id, s.name));
+  card.appendChild(btn);
+  container.appendChild(card);
+});
+// ...existing code...
+  } catch(err) {
+    console.error(err);
+    document.getElementById('servicesContainer').textContent = 'Could not load services.';
+  }
+}
+
+async function requestService(serviceId, fundiName){
+  const requester_name = prompt('Your name:');
+  if(!requester_name) return alert('Name required');
+  const requester_phone = prompt('Phone number:');
+  if(!requester_phone) return alert('Phone required');
+  try {
+    const res = await fetch('http://localhost:3000/api/requests', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ service_id: serviceId, requester_name, requester_phone })
+    });
+    const result = await res.json();
+    if (res.ok) alert('Request sent');
+    else alert(result.error || 'Failed to send request');
+  } catch(e){
+    alert('Network error');
+    console.error(e);
+  }
+}
+
+window.onload = loadServices;
+</script>
+</body>
+</html>

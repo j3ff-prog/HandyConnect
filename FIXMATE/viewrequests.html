@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fundi Requests</title>
+<style>
+ /* Place inside <style> tag */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f4f7f8;
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+#requestsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.request-card {
+  background: white;
+  border-radius: 10px;
+  padding: 22px 28px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.09);
+  transition: transform 0.22s, box-shadow 0.22s;
+  border: none;
+  position: relative;
+}
+
+.request-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.13);
+}
+
+.request-card b {
+  color: #2980b9;
+  font-weight: 600;
+}
+
+.request-card .request-info {
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+  color: #555;
+}
+
+button.delete-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 7px 13px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(220,53,69,0.08);
+  transition: background 0.2s;
+}
+
+button.delete-btn:hover {
+  background-color: #b02a37;
+}
+.accept-btn {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.accept-btn:hover {
+  background-color: #219150;
+}
+
+.decline-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.decline-btn:hover {
+  background-color: #b02a37;
+}
+</style>
+</head>
+<body>
+  <h1>Your Fundi Requests</h1>
+  <div id="requestsList">Loading requests...</div>
+
+<script>
+async function loadRequests(){
+  try {
+    const res = await fetch('http://localhost:3000/api/requests');
+    const requests = await res.json();
+    const container = document.getElementById('requestsList');
+    container.innerHTML = '';
+   // ...existing code...
+// ...existing code...
+requests.forEach(r => {
+  const div = document.createElement('div');
+  div.className = 'request-card';
+  div.innerHTML = `
+    <b>Fundi:</b> ${r.fundi_name}<br>
+    <b>Service:</b> ${r.service}<br>
+    <b>Client:</b> ${r.requester_name} (${r.requester_phone})<br>
+    <b>At:</b> ${new Date(r.requested_at).toLocaleString()}
+  `;
+
+  // Accept button
+  const acceptBtn = document.createElement('button');
+  acceptBtn.textContent = 'Accept';
+  acceptBtn.className = 'accept-btn';
+  acceptBtn.style.marginRight = '10px';
+  acceptBtn.onclick = () => {
+    addToMyJobs(r);
+    div.remove();
+  };
+
+  // Decline button
+  const declineBtn = document.createElement('button');
+  declineBtn.textContent = 'Decline';
+  declineBtn.className = 'decline-btn';
+  declineBtn.onclick = () => {
+    div.remove();
+    // Optionally, send API call to delete request from backend
+  };
+
+  const btnContainer = document.createElement('div');
+  btnContainer.style.marginTop = '18px';
+  btnContainer.appendChild(acceptBtn);
+  btnContainer.appendChild(declineBtn);
+
+  div.appendChild(btnContainer);
+  container.appendChild(div);
+});
+
+// Add this function below loadRequests
+function addToMyJobs(request) {
+  let jobs = JSON.parse(localStorage.getItem('myJobs') || '[]');
+  jobs.push({
+    title: request.service,
+    location: request.location || request.address || request.client_location || 'Unknown',
+    status: 'Pending'
+  });
+  localStorage.setItem('myJobs', JSON.stringify(jobs));
+  alert('Request accepted and added to My Jobs!');
+}
+
+  } catch(e){
+    console.error(e);
+    document.getElementById('requestsList').textContent='Failed to load requests';
+  }
+}
+window.onload = loadRequests;
+</script>
+</body>
+</html>

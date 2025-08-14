@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fundi Dashboard – FixMate</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f9fb;
+    }
+
+    .dashboard {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: #00bfff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px;
+      gap: 40px;
+      flex: 1;
+    }
+
+    .left {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .left h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #007b99;
+    }
+
+    .left p {
+      font-size: 1rem;
+      margin-bottom: 30px;
+      color: #333;
+      max-width: 500px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .buttons a {
+      text-decoration: none;
+    }
+
+    .btn {
+      padding: 14px 25px;
+      background-color: #00bfff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: fit-content;
+    }
+
+    .btn:hover {
+      background-color: #009acd;
+    }
+
+    .right {
+      flex: 1;
+      min-width: 280px;
+      text-align: center;
+    }
+
+    .right img {
+      max-width: 100%;
+      width: 400px;
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .right img {
+        width: 80%;
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard">
+    <div class="header">
+      <h1>Welcome, Fundi</h1>
+    </div>
+
+    <div class="main">
+      <div class="left">
+        <h2>Ready for some work?</h2>
+        <p>View client requests, manage your work history, and update your profile to get more gigs near you.</p>
+
+        <div class="buttons">
+           <a href="postservice.html"><button class="btn">Post Service</button></a>
+          <a href="viewrequests.html"><button class="btn">View Service Requests</button></a>
+          <a href="my-jobs.html"><button class="btn">My Jobs</button></a>
+          <a href="fundiregister.html"><button class="btn">Update Profile</button></a>
+          <a href="fundiregister.html"><button class="btn">Logout</button></a>
+        </div>
+      </div>
+
+      <div class="right">
+        <img src="images/Electrician-rafiki.svg" alt="Fundi Dashboard Illustration">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

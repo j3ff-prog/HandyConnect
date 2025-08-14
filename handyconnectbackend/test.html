@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test Services API</title></head>
+<body>
+<h1>Test Add Service</h1>
+<form id="serviceForm">
+  <input type="text" id="name" placeholder="Name" required><br>
+  <input type="text" id="service" placeholder="Service" required><br>
+  <input type="text" id="description" placeholder="Description"><br>
+  <input type="text" id="price" placeholder="Price"><br>
+  <button type="submit">Add Service</button>
+</form>
+
+<h2>All Services</h2>
+<ul id="servicesList"></ul>
+
+<script>
+  const form = document.getElementById('serviceForm');
+  const list = document.getElementById('servicesList');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+      name: form.name.value,
+      service: form.service.value,
+      description: form.description.value,
+      price: form.price.value
+    };
+    const res = await fetch('http://localhost:3000/api/services', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (res.ok) {
+      alert('Service added!');
+      form.reset();
+      loadServices();
+    } else {
+      alert('Error adding service');
+    }
+  });
+
+  async function loadServices() {
+    const res = await fetch('http://localhost:3000/api/services');
+    const services = await res.json();
+    list.innerHTML = '';
+    services.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = $ ;{s.name} - $;{s.service} - $;{s.description} - $;{s.price};
+      list.appendChild(li);
+    });
+  }
+
+  loadServices();
+</script>
+</body>
+</html>

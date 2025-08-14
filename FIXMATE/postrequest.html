@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job Request | HandyConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        button {
+            background: #007bff;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .preview-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .preview-box h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Post a Job Request</h2>
+    <form id="jobForm">
+        <label for="title">Job Title</label>
+        <input type="text" id="title" placeholder="e.g. Fix leaking kitchen sink" required>
+
+        <label for="description">Job Description</label>
+        <textarea id="description" placeholder="Describe the task in detail..." required></textarea>
+
+        <label for="category">Category</label>
+        <select id="category" required>
+            <option value="">-- Select a category --</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Carpentry">Carpentry</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Painting">Painting</option>
+        </select>
+
+        <label for="budget">Budget (KES)</label>
+        <input type="number" id="budget" placeholder="e.g. 1500" required>
+
+        <label for="location">Location</label>
+        <input type="text" id="location" placeholder="e.g. Nairobi West" required>
+
+        <label for="deadline">Deadline</label>
+        <input type="date" id="deadline" required>
+
+        <button type="button" onclick="previewJob()">Preview Request</button>
+    </form>
+
+    <div id="preview" class="preview-box" style="display:none;">
+        <h3>Preview Your Job Request</h3>
+        <p><strong>Title:</strong> <span id="prevTitle"></span></p>
+        <p><strong>Description:</strong> <span id="prevDescription"></span></p>
+        <p><strong>Category:</strong> <span id="prevCategory"></span></p>
+        <p><strong>Budget:</strong> KES <span id="prevBudget"></span></p>
+        <p><strong>Location:</strong> <span id="prevLocation"></span></p>
+        <p><strong>Deadline:</strong> <span id="prevDeadline"></span></p>
+        <button onclick="submitJob()">Submit Request</button>
+    </div>
+</div>
+
+<script>
+    function previewJob() {
+        document.getElementById("prevTitle").innerText = document.getElementById("title").value;
+        document.getElementById("prevDescription").innerText = document.getElementById("description").value;
+        document.getElementById("prevCategory").innerText = document.getElementById("category").value;
+        document.getElementById("prevBudget").innerText = document.getElementById("budget").value;
+        document.getElementById("prevLocation").innerText = document.getElementById("location").value;
+        document.getElementById("prevDeadline").innerText = document.getElementById("deadline").value;
+        document.getElementById("preview").style.display = "block";
+    }
+
+    function submitJob() {
+        const jobData = {
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            category: document.getElementById("category").value,
+            budget: document.getElementById("budget").value,
+            location: document.getElementById("location").value,
+            deadline: document.getElementById("deadline").value
+        };
+
+        console.log("Submitting job:", jobData);
+
+        // Example: Sending to backend API
+        fetch("http://localhost:5000/api/jobs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(jobData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Job posted successfully!");
+            document.getElementById("jobForm").reset();
+            document.getElementById("preview").style.display = "none";
+        })
+        .catch(err => {
+            console.error("Error posting job:", err);
+            alert("Failed to post job");
+        });
+    }
+</script>
+
+</body>
+</html>

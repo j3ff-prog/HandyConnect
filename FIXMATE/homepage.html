@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HandyConnect – Home</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #2bc1f3, #02a2d8);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding: 40px;
+    }
+
+    .hero-content {
+      display: flex;
+      gap: 40px;
+      max-width: 1200px;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .hero-text {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .hero-text h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      max-width: 500px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .buttons a {
+      text-decoration: none;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      background-color: #ffffff;
+      color: #009acd;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-weight: bold;
+    }
+
+    .btn:hover {
+      background-color: #e6f7ff;
+    }
+
+    .hero-img {
+      flex: 1;
+      max-width: 500px;
+      min-width: 250px;
+    }
+
+    .hero-img img {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding: 20px;
+        height: auto;
+      }
+
+      .hero-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero-text h1 {
+        font-size: 2.2rem;
+      }
+
+      .hero-text p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>Welcome to HandyConnect</h1>
+        <p>Your trusted platform to connect with skilled fundis for all your home repair needs across Kenya.</p>
+        <div class="buttons">
+          <a href="registerpage.html"><button class="btn">Register</button></a>
+          <a href="loginpage.html"><button class="btn">Login</button></a>
+        </div>
+      </div>
+      <div class="hero-img">
+        <img src="images/Electrician-pana.svg" alt="FixMate Illustration">
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

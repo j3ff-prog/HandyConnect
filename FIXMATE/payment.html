@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NestFind Payment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+      text-align: center;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Pay with M-Pesa</h2>
+    <p>Amount: Ksh 1,000</p>
+    <input type="tel" id="phoneNumber" placeholder="Enter phone number" style="width:100%; padding:8px; margin-top:10px;">
+    <button id="payBtn">Pay Now</button>
+  </div>
+
+  <script>
+    document.getElementById("payBtn").addEventListener("click", function () {
+      let phone = document.getElementById("phoneNumber").value.trim();
+
+      if (phone === "") {
+        alert("Please enter your phone number.");
+        return;
+      }
+
+      if (!/^(\+?254|0)?[7]\d{8}$/.test(phone)) {
+        alert("Please enter a valid Kenyan phone number.");
+        return;
+      }
+
+      alert("Payment request sent to " + phone);
+      // Here is where you'd integrate with your backend M-Pesa API
+    });
+  </script>
+
+</body>
+</html>

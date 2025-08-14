@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Fundi Registration</title>
+  <style>
+    /* keep simple styles or reuse your CSS file */
+    body{font-family:Arial;margin:40px}
+    .container{max-width:420px;margin:auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+    input,button{width:100%;padding:10px;margin:8px 0;border-radius:6px}
+    button{background:#007bff;color:#fff;border:0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Register as a Fundi</h2>
+    <form id="fundiForm">
+      <input id="fullName" name="fullName" placeholder="Full name" required />
+      <input id="email" name="email" type="email" placeholder="Email" required />
+      <input id="phone" name="phone" placeholder="Phone" required />
+      <input id="password" name="password" type="password" placeholder="Password" required />
+      <input id="service" name="service" placeholder="Service (e.g. Plumbing)" required />
+      <input id="location" name="location" placeholder="Location (e.g. Juja)" required />
+      <button type="submit">Register</button>
+    </form>
+    <p id="msg"></p>
+  </div>
+
+<script>
+document.getElementById('fundiForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const fullName = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const password = document.getElementById('password').value;
+  const service = document.getElementById('service').value.trim();
+  const location = document.getElementById('location').value.trim();
+
+  const data = {
+    username: email,
+    password,
+    role: 'fundi',
+    name: fullName,
+    phone,
+    email,
+    service,
+    location
+  };
+
+  try {
+    const res = await fetch('http://localhost:3000/api/register', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (res.ok) {
+      document.getElementById('msg').textContent = 'Registered. Redirecting to dashboard...';
+      setTimeout(()=> location.href = 'fundidashboard.html', 1000);
+    } else {
+      document.getElementById('msg').textContent = result.error || 'Registration failed';
+    }
+  } catch (err) {
+    document.getElementById('msg').textContent = 'Network error';
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>
