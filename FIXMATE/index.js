@@ -29,8 +29,8 @@ app.post('/api/mpesa-pay', async (req, res) => {
   const consumerKey = '1G9GQIxwhmchBt8OWK347TGFEAKPHPmHMXaCPwALEhNApbFT';
   const consumerSecret = 'B2ibJC7IUmw72TbdjQKU0JrfAohey8vg1sJmrzYyto5OBAYIgjfAMzABsJJwi7kF';
   const shortcode = '174379'; // Default sandbox shortcode
-  const passkey = 'YOUR_SANDBOX_PASSKEY';
-  const callbackUrl = 'https://mydomain.com/mpesa-callback'; // Use any valid URL for sandbox
+  const passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
+  const callbackUrl = 'https://mydomain.com/path'; // Use any valid URL for sandbox
 
   // --- Get access token ---
   let accessToken;
