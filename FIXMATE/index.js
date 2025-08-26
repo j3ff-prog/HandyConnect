@@ -16,6 +16,19 @@ app.get('/', (req, res) => {
 // Serve static files from the FIXMATE directory
 app.use(express.static(path.join(__dirname)));
 
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  // Replace this with your actual user lookup logic
+  const user = await findUserByUsernameAndPassword(username, password); // <-- implement this
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  // Replace this with your actual token generation logic
+  const token = generateToken(user); // <-- implement this
+  // Send token and role
+  res.json({ token, role: user.role });
+});
+
 // --- M-Pesa Sandbox STK Push Endpoint ---
 app.post('/api/mpesa-pay', async (req, res) => {
   const { phone, amount } = req.body;
@@ -85,5 +98,5 @@ app.post('/api/mpesa-pay', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Frontend server running at http://localhost:${PORT}`);
+  console.log(`Frontend server running at http://localhost:3000`);
 });

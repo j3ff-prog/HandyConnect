@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Review Fundi</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(to right, #2bc1f3, #02a2d8);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: #fff;
+      padding: 32px 28px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(44,193,243,0.10);
+      max-width: 400px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    h2 {
+      text-align: center;
+      color: #009acd;
+      margin-bottom: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    label {
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    select, textarea, input {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #cce7f6;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    select:focus, textarea:focus, input:focus {
+      border-color: #2bc1f3;
+    }
+    button {
+      background: #2bc1f3;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #009acd;
+    }
+    #msg {
+      text-align: center;
+      margin-top: 10px;
+      color: #d32f2f;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <form class="container" id="reviewForm">
+    <h2>Review Fundi</h2>
+    <label for="fundi">Select Fundi</label>
+    <select id="fundi" required>
+      <option value="">-- Select Fundi --</option>
+    </select>
+    <label for="rating">Rating</label>
+    <select id="rating" required>
+      <option value="">-- Select Rating --</option>
+      <option value="5">5 - Excellent</option>
+      <option value="4">4 - Good</option>
+      <option value="3">3 - Average</option>
+      <option value="2">2 - Poor</option>
+      <option value="1">1 - Terrible</option>
+    </select>
+    <label for="comment">Comment</label>
+    <textarea id="comment" rows="4" placeholder="Write your review..." required></textarea>
+    <button type="submit">Submit Review</button>
+    <p id="msg"></p>
+  </form>
+  <script>
+    // Fetch fundis from backend and populate select
+    async function loadFundis() {
+      try {
+        const res = await fetch('http://localhost:3000/api/fundis');
+        const fundis = await res.json();
+        const select = document.getElementById('fundi');
+        fundis.forEach(f => {
+          const opt = document.createElement('option');
+          opt.value = f.id;
+          opt.textContent = f.name;
+          select.appendChild(opt);
+        });
+      } catch (err) {
+        document.getElementById('msg').textContent = 'Failed to load fundis.';
+      }
+    }
+    loadFundis();
+
+    document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const msg = document.getElementById('msg');
+      msg.textContent = 'Submitting review...';
+      const fundiId = document.getElementById('fundi').value;
+      const rating = document.getElementById('rating').value;
+      const comment = document.getElementById('comment').value.trim();
+      try {
+        const res = await fetch('http://localhost:3000/api/review-fundi', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ fundiId, rating, comment })
+        });
+        const result = await res.json();
+        if (res.ok) {
+          msg.style.color = 'green';
+          msg.textContent = 'Review submitted!';
+          document.getElementById('reviewForm').reset();
+        } else {
+          msg.style.color = 'red';
+          msg.textContent = result.error || 'Failed to submit review.';
+        }
+      } catch (err) {
+        msg.style.color = 'red';
+        msg.textContent = 'Network error. Try again.';
+      }
+    });
+  </script>
+</body>
+</html>

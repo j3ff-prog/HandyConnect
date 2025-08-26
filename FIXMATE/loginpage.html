@@ -29,8 +29,14 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     if (res.ok && result.token) {
       localStorage.setItem('token', result.token);
       document.getElementById('msg').textContent = 'Login successful. Redirecting...';
-      // choose destination based on role if you want. For now go to browse
-      setTimeout(()=> location.href = 'clientdashboard.html', 700);
+      // Redirect based on role
+      if (result.role === 'fundi') {
+        setTimeout(()=> location.href = 'fundidashboard.html', 700);
+      } else if (result.role === 'client') {
+        setTimeout(()=> location.href = 'clientdashboard.html', 700);
+      } else {
+        setTimeout(()=> location.href = 'homepage.html', 700);
+      }
     } else {
       document.getElementById('msg').textContent = result.error || 'Login failed';
     }
