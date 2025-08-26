@@ -62,7 +62,7 @@ document.getElementById('fundiForm').addEventListener('submit', async function(e
     if (res.ok) {
       msg.style.color = 'green';
       msg.textContent = 'Registered! Redirecting to dashboard...';
-      setTimeout(()=> location.href = 'fundidashboard.html', 1200);
+      setTimeout(()=> location.href = 'fundisdashboard.html', 1200);
     } else {
       msg.style.color = 'red';
       msg.textContent = result.error || 'Registration failed';
