@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HandyConnect Admin</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f5f6fa;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #3198ff;
+      color: #fff;
+      padding: 20px;
+      transition: 0.3s;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      padding: 15px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .sidebar ul li:hover {
+      background: #85c0fc;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .header {
+      background: #2980b9;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    table th {
+      background: #3cb1ff;
+      color: #fff;
+    }
+
+    /* Toggle Button */
+    .toggle-btn {
+      display: none;
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 20px;
+      background: #40b2fd;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        left: -250px;
+        top: 0;
+        height: 100%;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .toggle-btn {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>Admin Panel</h2>
+    <ul>
+      <li onclick="showSection('dashboard')"> Dashboard</li>
+      <li onclick="showSection('users')">Clients</li>
+      <li onclick="showSection('fundis')"> Fundis</li>
+      <li onclick="showSection('payments')"> Payments</li>
+      <li onclick="logout()">Logout</li>
+    </ul>
+  </div>
+
+  <!-- Main -->
+  <div class="main" id="main">
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+
+    <div id="dashboard" class="card">
+      <h3>Dashboard</h3>
+      <p>Welcome to HandyConnect Admin Panel!</p>
+      <p>Here you can manage Clients, Fundis, and Payments.</p>
+    </div>
+
+    <div id="users" class="card" style="display:none;">
+      <h3>Registered Clients</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="userTable">
+          <!-- JS will load data here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="fundis" class="card" style="display:none;">
+      <h3>Registered Fundis</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Skill</th>
+          </tr>
+        </thead>
+        <tbody id="fundiTable">
+          <!-- JS will load data here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="payments" class="card" style="display:none;">
+      <h3>Payments</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>User</th><th>Amount</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="paymentTable">
+          <!-- JS will load data here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Show sections
+    function showSection(sectionId) {
+      document.querySelectorAll('.card').forEach(card => card.style.display = 'none');
+      document.getElementById(sectionId).style.display = 'block';
+
+      // Load dummy data when sections are clicked
+      if(sectionId === 'users') loadUsers();
+      if(sectionId === 'fundis') loadFundis();
+      if(sectionId === 'payments') loadPayments();
+    }
+
+    // Dummy data
+    function loadUsers() {
+      const users = [
+        {id: 1, name: "Jeff Michael", email: "jeff@email.com"},
+        {id: 2, name: "Alice", email: "alice@email.com"}
+      ];
+      let html = "";
+      users.forEach(u => {
+        html += <tr><td>${u.id}</td><td>${u.name}</td><td>${u.email}</td></tr>;
+      });
+      document.getElementById("userTable").innerHTML = html;
+    }
+
+    function loadFundis() {
+      const fundis = [
+        {id: 1, name: "Peter", skill: "Plumbing"},
+        {id: 2, name: "John", skill: "Electrician"}
+      ];
+      let html = "";
+      fundis.forEach(f => {
+        html += <tr><td>${f.id}</td><td>${f.name}</td><td>${f.skill}</td></tr>;
+      });
+      document.getElementById("fundiTable").innerHTML = html;
+    }
+
+    function loadPayments() {
+      const payments = [
+        {id: 1, user: "Jeff", amount: "Ksh 1000", status: "Success"},
+        {id: 2, user: "Alice", amount: "Ksh 500", status: "Pending"}
+      ];
+      let html = "";
+      payments.forEach(p => {
+        html += <tr><td>${p.id}</td><td>${p.user}</td><td>${p.amount}</td><td>${p.status}</td></tr>;
+      });
+      document.getElementById("paymentTable").innerHTML = html;
+    }
+
+    // Logout
+    function logout() {
+      alert("Logging out...");
+      window.location.href = "loginpage.html"; // Redirect to login page
+    }
+  </script>
+</body>
+</html>
