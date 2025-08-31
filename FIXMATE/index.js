@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
 
 app.use(bodyParser.json());
 
@@ -98,5 +98,5 @@ app.post('/api/mpesa-pay', async (req, res) => {
   }
 });
 app.listen(PORT, () => {
-  console.log(`Frontend server running at http://localhost:3000`);
+  console.log(`Frontend server running at http://localhost:5000`);
 });

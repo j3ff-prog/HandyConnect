@@ -3,8 +3,10 @@ const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const JWT_SECRET='supersecretkey'; 
 const bcrypt = require('bcrypt');
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
+const saltRounds = 10;
 
 const app=express();
 // Middleware
@@ -157,5 +159,5 @@ app.get('/api/requests', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:3000`);
 });
