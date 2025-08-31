@@ -106,7 +106,6 @@ services.forEach(s => {
   card.appendChild(btn);
   container.appendChild(card);
 });
-// ...existing code...
   } catch(err) {
     console.error(err);
     document.getElementById('servicesContainer').textContent = 'Could not load services.';
@@ -118,11 +117,13 @@ async function requestService(serviceId, fundiName){
   if(!requester_name) return alert('Name required');
   const requester_phone = prompt('Phone number:');
   if(!requester_phone) return alert('Phone required');
+   const requester_location = prompt('Location:');
+  if(!requester_location) return alert('Location required');
   try {
     const res = await fetch('http://localhost:3000/api/requests', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ service_id: serviceId, requester_name, requester_phone })
+      body: JSON.stringify({ service_id: serviceId, requester_name, requester_phone,requester_location })
     });
     const result = await res.json();
     if (res.ok) alert('Request sent');

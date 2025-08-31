@@ -97,11 +97,6 @@ app.post('/api/mpesa-pay', async (req, res) => {
     res.status(500).json({ error: 'Failed to initiate sandbox payment.' });
   }
 });
-
-app.listen(PORT, () => {
-  console.log(`Frontend server running at http://localhost:${PORT}`);
-});
-
 app.listen(PORT, () => {
   console.log(`Frontend server running at http://localhost:3000`);
 });

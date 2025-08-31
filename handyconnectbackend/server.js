@@ -5,14 +5,45 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const app = express();
-const PORT = 3000;
-const JWT_SECRET = 'your_secret_key'; // change this in production
-const saltRounds = 10;
-
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// Your M-Pesa credentials 
+const CONSUMER_KEY = process.env.MPESA_CONSUMER_KEY;
+const CONSUMER_SECRET = process.env.MPESA_CONSUMER_SECRET;
+const SHORTCODE = process.env.MPESA_SHORTCODE;
+const PASSKEY = process.env.MPESA_PASSKEY;
+
+// Get access token from M-Pesa
+async function getAccessToken() {}
+    const auth = Buffer.from(${CONSUMER_KEY}:${CONSUMER_SECRET}).toString('base64');
+    
+    try {
+        const response = await axios.get(
+            'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+            {
+                headers: {
+                    Authorization: Basic ${auth}
+                }
+            }
+        );
+        
+        return response.data.access_token;
+    } catch (error) {
+        console.error('Error getting access token:', error.response?.data || error.message);
+        throw error;
+    }
+  
 
 // Authenticate Token Middleware
 function authenticateToken(req, res, next) {
@@ -158,4 +189,108 @@ app.get('/api/requests', (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
+});
+
+
+
+
+
+
+
+
+// Initiate STK push
+app.post('/api/mpesa/payment-request', async (req, res) => {
+    try {
+        const { phone, amount } = req.body;
+        
+        const accessToken = await getAccessToken();
+        const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -3);
+        const password = Buffer.from(${SHORTCODE}${PASSKEY}${timestamp}).toString('base64');
+        
+        const response = await axios.post(
+            'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+            {
+                BusinessShortCode: SHORTCODE,
+                Password: password,
+                Timestamp: timestamp,
+                TransactionType: 'CustomerPayBillOnline',
+                Amount: amount,
+                PartyA: 254${phone},
+                PartyB: SHORTCODE,
+                PhoneNumber: 254${phone},
+                CallBackURL: ${process.env.BASE_URL}/api/mpesa/callback,
+                AccountReference: 'Payment',
+                TransactionDesc: 'Payment for services'
+            },
+            {
+                headers: {
+                    Authorization: Bearer ${accessToken}
+                }
+            }
+        );
+        
+        res.json({
+            success: true,
+            checkoutRequestID: response.data.CheckoutRequestID,
+            response: response.data
+        });
+    } catch (error) {
+        console.error('Error initiating payment:', error.response?.data || error.message);
+        res.status(500).json({
+            success: false,
+            errorMessage: error.response?.data?.errorMessage || 'Failed to initiate payment'
+        });
+    }
+});
+
+// M-Pesa callback endpoint
+app.post('/api/mpesa/callback', (req, res) => {
+    console.log('Payment callback received:', JSON.stringify(req.body, null, 2));
+    
+    // Here you would update your database with the payment status
+    // based on the callback data from M-Pesa
+    
+    res.status(200).send();
+});
+
+// Check payment status
+app.post('/api/mpesa/payment-status', async (req, res) => {
+    try {
+        const { checkoutRequestID } = req.body;
+        
+        const accessToken = await getAccessToken();
+        const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -3);
+        const password = Buffer.from(${SHORTCODE}${PASSKEY}${timestamp}).toString('base64');
+        
+        const response = await axios.post(
+            'https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query',
+            {
+                BusinessShortCode: SHORTCODE,
+                Password: password,
+                Timestamp: timestamp,
+                CheckoutRequestID: checkoutRequestID
+            },
+            {
+                headers: {
+                    Authorization: Bearer ${accessToken}
+                }
+            }
+        );
+        
+        res.json({
+            status: response.data.ResultCode === '0' ? 'completed' : 'pending',
+            response: response.data
+        });
+    } catch (error) {
+        console.error('Error checking payment status:', error.response?.data || error.message);
+        res.status(500).json({
+            status: 'error',
+            errorMessage: error.response?.data?.errorMessage || 'Failed to check payment status'
+        });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(Server running on port ${PORT});
 });

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Pesa Payment Integration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #006cbe;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-row {
+            margin-bottom: 20px;
+        }
+        
+        .form-row label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: #006cbe;
+            outline: none;
+        }
+        
+        .phone-input {
+            display: flex;
+        }
+        
+        .phone-prefix {
+            background: #f0f0f0;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            font-weight: 600;
+        }
+        
+        .phone-number {
+            flex: 1;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .amount-input {
+            position: relative;
+        }
+        
+        .currency {
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .amount-field {
+            padding-left: 35px;
+        }
+        
+        .btn {
+            background: #00a650;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #008c42;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .status-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .status-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .status-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-icon {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border: 4px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 18px;
+            color: #777;
+        }
+        
+        .step.active .step-icon {
+            border-color: #006cbe;
+            background: #006cbe;
+            color: white;
+        }
+        
+        .step.completed .step-icon {
+            border-color: #00a650;
+            background: #00a650;
+            color: white;
+        }
+        
+        .step-text {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .step.active .step-text {
+            color: #006cbe;
+            font-weight: 600;
+        }
+        
+        .status-message {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            border-left: 4px solid #006cbe;
+        }
+        
+        .success {
+            color: #00a650;
+        }
+        
+        .error {
+            color: #e02d2d;
+        }
+        
+        .info-box {
+            background: #e8f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .info-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #006cbe;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-title i {
+            margin-right: 10px;
+        }
+        
+        .info-content {
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .status-steps {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .step {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+            
+            .step-icon {
+                margin: 0 15px 0 0;
+            }
+            
+            .status-steps::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-mobile-alt"></i> M-Pesa Payment</h1>
+            <p>Enter your payment details to receive a prompt on your phone</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-row">
+                <label for="phone">Phone Number</label>
+                <div class="phone-input">
+                    <div class="phone-prefix">+254</div>
+                    <input type="tel" id="phone" class="form-input phone-number" placeholder="712 345 678" maxlength="11">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <label for="amount">Amount (KES)</label>
+                <div class="amount-input">
+                    <span class="currency">KES</span>
+                    <input type="number" id="amount" class="form-input amount-field" placeholder="100" min="1">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <button id="pay-btn" class="btn">
+                    <i class="fas fa-paper-plane"></i> Send Payment Request
+                </button>
+            </div>
+            
+            <div class="status-container">
+                <h3 class="status-title">Payment Status</h3>
+                
+                <div class="status-steps">
+                    <div class="step" id="step-1">
+                        <div class="step-icon">1</div>
+                        <div class="step-text">Request Sent</div>
+                    </div>
+                    <div class="step" id="step-2">
+                        <div class="step-icon">2</div>
+                        <div class="step-text">Prompt Received</div>
+                    </div>
+                    <div class="step" id="step-3">
+                        <div class="step-icon">3</div>
+                        <div class="step-text">Payment Confirmed</div>
+                    </div>
+                </div>
+                
+                <div id="status-message" class="status-message">
+                    Enter your details and click "Send Payment Request"
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3 class="info-title"><i class="fas fa-info-circle"></i> How it works</h3>
+                <p class="info-content">
+                    After clicking the payment button, you will receive an M-Pesa prompt on your phone.
+                    Enter your M-Pesa PIN to complete the payment. The status will update automatically.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const phoneInput = document.getElementById('phone');
+            const amountInput = document.getElementById('amount');
+            const payButton = document.getElementById('pay-btn');
+            const statusMessage = document.getElementById('status-message');
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const step3 = document.getElementById('step-3');
+            
+            // Format phone number as user types
+            phoneInput.addEventListener('input', function(e) {
+                // Remove any non-digit characters
+                let value = e.target.value.replace(/\D/g, '');
+                
+                // Format with spaces for readability: 712 345 678
+                if (value.length > 6) {
+                    value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6, 9);
+                } else if (value.length > 3) {
+                    value = value.substring(0, 3) + ' ' + value.substring(3, 6);
+                }
+                
+                e.target.value = value;
+            });
+            
+            // Handle payment button click
+            payButton.addEventListener('click', function() {
+                initiatePayment();
+            });
+            
+            // Function to initiate payment
+            function initiatePayment() {
+                // Validate inputs
+                const phone = phoneInput.value.replace(/\s/g, '');
+                const amount = amountInput.value;
+                
+                if (!phone || phone.length !== 9) {
+                    showError('Please enter a valid 9-digit phone number (without +254)');
+                    return;
+                }
+                
+                if (!amount || amount < 1) {
+                    showError('Please enter a valid amount (at least KES 1)');
+                    return;
+                }
+                
+                // Disable button to prevent multiple clicks
+                payButton.disabled = true;
+                payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                // Reset steps
+                resetSteps();
+                
+                // Simulate API call to backend
+                simulateMpesaApiCall(phone, amount);
+            }
+            
+            // Function to simulate API call to M-Pesa
+            function simulateMpesaApiCall(phone, amount) {
+                // Update status
+                step1.classList.add('active');
+                statusMessage.textContent = 'Sending payment request to M-Pesa...';
+                statusMessage.className = 'status-message';
+                
+                // Simulate API delay (2 seconds)
+                setTimeout(() => {
+                    // Update status to show prompt sent
+                    step1.classList.remove('active');
+                    step1.classList.add('completed');
+                    step2.classList.add('active');
+                    
+                    statusMessage.innerHTML = 'M-Pesa prompt sent to <strong>+254' + formatPhoneForDisplay(phone) + '</strong>. ';
+                    statusMessage.innerHTML += 'Check your phone and enter your M-Pesa PIN to complete payment.';
+                    
+                    // Simulate waiting for user action (5 seconds)
+                    setTimeout(() => {
+                        simulatePaymentConfirmation(phone, amount);
+                    }, 5000);
+                }, 2000);
+            }
+            
+            // Function to simulate payment confirmation
+            function simulatePaymentConfirmation(phone, amount) {
+                // Update status to show payment in progress
+                statusMessage.innerHTML = 'Processing your payment...';
+                
+                // Simulate processing delay (3 seconds)
+                setTimeout(() => {
+                    // Update status to show payment completed
+                    step2.classList.remove('active');
+                    step2.classList.add('completed');
+                    step3.classList.add('active');
+                    
+                    // Randomly determine success or failure (80% success rate)
+                    const isSuccess = Math.random() > 0.2;
+                    
+                    if (isSuccess) {
+                        // Success case
+                        step3.classList.add('completed');
+                        statusMessage.innerHTML = '<span class="success"><i class="fas fa-check-circle"></i> Payment successful!</span><br>';
+                        statusMessage.innerHTML += 'KES ' + amount + ' has been received from +254' + formatPhoneForDisplay(phone);
+                        
+                        payButton.innerHTML = '<i class="fas fa-check"></i> Payment Completed';
+                    } else {
+                        // Failure case
+                        statusMessage.innerHTML = '<span class="error"><i class="fas fa-times-circle"></i> Payment failed</span><br>';
+                        statusMessage.innerHTML += 'The payment was not completed. Please try again.';
+                        
+                        payButton.disabled = false;
+                        payButton.innerHTML = '<i class="fas fa-paper-plane"></i> Try Again';
+                        
+                        // Reset steps for retry
+                        step3.classList.remove('active');
+                    }
+                }, 3000);
+            }
+            
+            // Helper function to format phone for display
+            function formatPhoneForDisplay(phone) {
+                if (phone.length === 9) {
+                    return phone.substring(0, 3) + ' ' + phone.substring(3, 6) + ' ' + phone.substring(6, 9);
+                }
+                return phone;
+            }
+            
+            // Function to show error message
+            function showError(message) {
+                statusMessage.innerHTML = '<span class="error"><i class="fas fa-exclamation-circle"></i> ' + message + '</span>';
+                statusMessage.className = 'status-message';
+            }
+            
+            // Function to reset all steps
+            function resetSteps() {
+                [step1, step2, step3].forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+            }
+            
+            // Add event listener for Enter key
+            amountInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    initiatePayment();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
